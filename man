@@ -1,0 +1,114 @@
+.TH Man page for the VASP (vienna ab initio Simulations Package) and utilities.
+
+.SH BASIC INPUT FILES
+
+Every VASP calculation must have 4 files: 
+
+.B INCAR
+The main control file.
+
+.B POTCAR
+The PAW projectors.
+
+.B KPOINTS
+The K-points smash in the recíprocal space.
+
+.B POSCAR
+The positions of the atoms.
+
+.SH FUNCTIONALS
+
+For using the PBESol approach, set the flag 
+.B GGA = PS
+in the
+.B INCAR 
+file and using the PBE PAW projectors.
+
+.SH STRESS TENSOR CALCULATIONS (ST)
+
+Set the cutoff energy to 
+.B ENCUT = 1.5 * ENMAX
+
+copy the 
+.B CONTCAR 
+file the the 
+.B POSCAR
+file until the calculation realize only 1 iônic step
+
+.SH OPTIMIZATION CALCULATION (NO ST)
+
+Set the Cutoff energy to 
+.B ENCUT = 1.125 * ENMAX
+
+
+.SH DENSITY OF STATE CALCULATIONS (DOS)
+
+.TP
+In the 
+.B INCAR 
+File set change the following variables: NSW = 0; SIGMA = 0.01; ISMEAR = 0; NEDOS = 6001; ENCUT = 1.125 * ENMAX; LORBIT = 10; NBANDS = NELECT (Relaxation), IBRION=-1, ISIF=0, LVHAR=.TRUE. 
+
+.TP
+In the 
+.B KPOINTS 
+File duplicate the number of K-Points
+
+
+.SH BANDS CALCULATIONS (BANDS)
+
+.TP 
+.B First Execution:
+
+In the 
+.B INCAR 
+file set the following variables:
+ENCUT = 1.125 * ENMAX; NSW = 0; LCHARGE = .TRUE.; NBANDS = NELECT (Relaxation). 
+
+.TP
+.B Secund Execution:
+
+In the 
+.B INCAR
+file set the following variables: NBANDS = NELECT (Relaxation); LCHARG = .FALSE.; copy 
+.B CHGCAR
+from the last step; ICHARG = 11; LORBIT = 10
+
+In the 
+.B KPOINS 
+file set the path desiable for the system, e.g. K-gamma-M-K.
+
+
+.SH WORK FUNCTION
+
+The For the work function calculation, in the 
+.B INCAR 
+file, change the variable LVHAR = .TRUE. and no update the atoms position. Are recomended done this calculation togheter with DOS calculations 
+
+The work function can be calculated using: wf = Vvac - EFermi. where Vvac are the vacum potential from the Hartree potential curve and EFermi can be colected using: 'grep "fermi" OUTCAR'. Is requiered to colect the fermi level from Relaxation (DOS) simulation.
+
+
+.SH CHARGE DENSITY and CHARGE DIFERENCE
+
+The flag LCHARG = .TRUE. writes the charge density of the system. Are importante set NSW = 0 to no update the atomic positions.  
+
+For the charge density diference, plot the charge density of eache individual subsystem, keep the positions and change the 
+.B POTCAR 
+file accoding the the chemical species.
+
+.SH CALCULATION WITH SOC (Spin Orbit Couplig)
+
+For SOC calculation, change the folow variables: LSORBIT=.True., NBANDS = 2* NELECT and using the 
+.B vasp_ncl 
+binary
+
+.SH HYBRID FUNCTIONALS (HSE06)
+For HSE06 calculation, add the following variables in the INCAR file: 
+LHFCALC = .TRUE., AEXX = 0.25, HFSCREEN = 0.207
+
+
+.SH BADER charge Analisys
+Add the folowing variable in the 
+.B INCAR 
+file: LAECHG=.TRUE
+The other evaluations follow the website: http://theory.cm.utexas.edu/henkelman/code/bader/
+NGX!!!!
